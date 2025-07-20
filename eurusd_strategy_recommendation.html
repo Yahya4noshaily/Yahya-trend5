@@ -59,6 +59,79 @@
 
     // جلب تلقائي عند فتح الصفحة
     fetchRecommendation();
-  </script>
+  </script><script>
+const token = "MJPXRBjyjTtzvtZ";
+const ws = new WebSocket("wss://ws.derivws.com/websockets/v3?app_id=1089");
+
+let latestPrice = null;
+
+ws.onopen = function () {
+  ws.send(JSON.stringify({ authorize: token }));
+
+  // الاشتراك في سعر EUR/USD
+  ws.send(JSON.stringify({
+    ticks_subscribe: "frxEURUSD"
+  }));
+};
+
+ws.onmessage = function (msg) {
+  const data = JSON.parse(msg.data);
+
+  if (data.msg_type === "tick") {
+    latestPrice = parseFloat(data.tick.quote);
+    const recommendation = getAIRecommendation(latestPrice);
+
+    document.getElementById("price").innerText = `السعر اللحظي: ${latestPrice}`;
+    document.getElementById("recommendation").innerText = `التوصية: ${recommendation}`;
+    document.getElementById("time").innerText = `⏰ ${new Date().toLocaleTimeString('ar-EG')}`;
+  }
+};
+
+function getAIRecommendation(price) {
+  // ذكاء اصطناعي مبسط: يحلل الاتجاه من السعر فقط
+  if (price > 1.0850) return "📉 بيع (ذكاء اصطناعي)";
+  else if (price < 1.0800) return "📈 شراء (ذكاء اصطناعي)";
+  else return "⏳ انتظر، السوق غير واضح";
+}
+</script>
+</body><body>
+  <div class="container">
+    <h1>🤖 توصية الذكاء الاصطناعي - EUR/USD</h1>
+
+    <!-- ✅ هنا تضيف العناصر -->
+    <p id="price">السعر اللحظي: ...</p>
+    <p id="recommendation">التوصية: ...</p>
+    <p id="time">⏰ ...</p>
+
+    <!-- ✅ هنا تضيف السكربت -->
+    <script>
+      const token = "MJPXRBjyjTtzvtZ";
+      const ws = new WebSocket("wss://ws.derivws.com/websockets/v3?app_id=1089");
+
+      let latestPrice = null;
+
+      ws.onopen = function () {
+        ws.send(JSON.stringify({ authorize: token }));
+        ws.send(JSON.stringify({ ticks_subscribe: "frxEURUSD" }));
+      };
+
+      ws.onmessage = function (msg) {
+        const data = JSON.parse(msg.data);
+        if (data.msg_type === "tick") {
+          latestPrice = parseFloat(data.tick.quote);
+          const recommendation = getAIRecommendation(latestPrice);
+          document.getElementById("price").innerText = `السعر اللحظي: ${latestPrice}`;
+          document.getElementById("recommendation").innerText = `التوصية: ${recommendation}`;
+          document.getElementById("time").innerText = `⏰ ${new Date().toLocaleTimeString('ar-EG')}`;
+        }
+      };
+
+      function getAIRecommendation(price) {
+        if (price > 1.0850) return "📉 بيع (ذكاء اصطناعي)";
+        else if (price < 1.0800) return "📈 شراء (ذكاء اصطناعي)";
+        else return "⏳ انتظر، السوق غير واضح";
+      }
+    </script>
+  </div>
 </body>
 </html>
