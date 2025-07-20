@@ -2,136 +2,73 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <title>توصية EUR/USD - Yahya Trend</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>توصية الذكاء الاصطناعي | Yahya Trend</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      background: #111;
+      background-color: #111;
       color: #eee;
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       text-align: center;
-      padding: 50px;
+      padding: 40px;
     }
     .container {
-      background: #222;
-      padding: 20px;
+      background-color: #222;
+      padding: 30px;
       border-radius: 10px;
       display: inline-block;
-      max-width: 400px;
-      margin: auto;
+      max-width: 500px;
+      margin-top: 30px;
     }
-    button {
-      padding: 10px 20px;
+    h1 {
+      margin-bottom: 20px;
+    }
+    p {
       font-size: 18px;
-      margin-top: 20px;
-      cursor: pointer;
+      margin: 10px 0;
+    }
+    .footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #888;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>📊 توصية EUR/USD</h1>
-    <p id="recommendation">جاري تحميل التوصية...</p>
-    <p id="price">السعر الحالي: ...</p>
-    <button onclick="fetchRecommendation()">🔄 تحديث التوصية</button>
-  </div>
-
-  <script>
-    async function fetchRecommendation() {
-      try {
-        const res = await fetch(
-          "https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=1min&apikey=GJSY9KUAILF51AR"
-        );
-        const data = await res.json();
-        const latestTime = Object.keys(data["Time Series FX (1min)"])[0];
-        const currentPrice = data["Time Series FX (1min)"][latestTime]["1. open"];
-
-        // توصية بسيطة: إذا السعر فوق 1.08 => شراء، غير ذلك بيع
-        const signal = currentPrice > 1.08 ? "✅ شراء" : "🚫 بيع";
-
-        document.getElementById("recommendation").textContent = `التوصية: ${signal}`;
-        document.getElementById("price").textContent = `السعر الحالي: ${currentPrice}`;
-      } catch (error) {
-        document.getElementById("recommendation").textContent = "❌ فشل في جلب التوصية";
-        console.error("API Error:", error);
-      }
-    }
-
-    // جلب تلقائي عند فتح الصفحة
-    fetchRecommendation();
-  </script><script>
-const token = "MJPXRBjyjTtzvtZ";
-const ws = new WebSocket("wss://ws.derivws.com/websockets/v3?app_id=1089");
-
-let latestPrice = null;
-
-ws.onopen = function () {
-  ws.send(JSON.stringify({ authorize: token }));
-
-  // الاشتراك في سعر EUR/USD
-  ws.send(JSON.stringify({
-    ticks_subscribe: "frxEURUSD"
-  }));
-};
-
-ws.onmessage = function (msg) {
-  const data = JSON.parse(msg.data);
-
-  if (data.msg_type === "tick") {
-    latestPrice = parseFloat(data.tick.quote);
-    const recommendation = getAIRecommendation(latestPrice);
-
-    document.getElementById("price").innerText = `السعر اللحظي: ${latestPrice}`;
-    document.getElementById("recommendation").innerText = `التوصية: ${recommendation}`;
-    document.getElementById("time").innerText = `⏰ ${new Date().toLocaleTimeString('ar-EG')}`;
-  }
-};
-
-function getAIRecommendation(price) {
-  // ذكاء اصطناعي مبسط: يحلل الاتجاه من السعر فقط
-  if (price > 1.0850) return "📉 بيع (ذكاء اصطناعي)";
-  else if (price < 1.0800) return "📈 شراء (ذكاء اصطناعي)";
-  else return "⏳ انتظر، السوق غير واضح";
-}
-</script>
-</body><body>
-  <div class="container">
     <h1>🤖 توصية الذكاء الاصطناعي - EUR/USD</h1>
-
-    <!-- ✅ هنا تضيف العناصر -->
     <p id="price">السعر اللحظي: ...</p>
     <p id="recommendation">التوصية: ...</p>
     <p id="time">⏰ ...</p>
-
-    <!-- ✅ هنا تضيف السكربت -->
-    <script>
-      const token = "MJPXRBjyjTtzvtZ";
-      const ws = new WebSocket("wss://ws.derivws.com/websockets/v3?app_id=1089");
-
-      let latestPrice = null;
-
-      ws.onopen = function () {
-        ws.send(JSON.stringify({ authorize: token }));
-        ws.send(JSON.stringify({ ticks_subscribe: "frxEURUSD" }));
-      };
-
-      ws.onmessage = function (msg) {
-        const data = JSON.parse(msg.data);
-        if (data.msg_type === "tick") {
-          latestPrice = parseFloat(data.tick.quote);
-          const recommendation = getAIRecommendation(latestPrice);
-          document.getElementById("price").innerText = `السعر اللحظي: ${latestPrice}`;
-          document.getElementById("recommendation").innerText = `التوصية: ${recommendation}`;
-          document.getElementById("time").innerText = `⏰ ${new Date().toLocaleTimeString('ar-EG')}`;
-        }
-      };
-
-      function getAIRecommendation(price) {
-        if (price > 1.0850) return "📉 بيع (ذكاء اصطناعي)";
-        else if (price < 1.0800) return "📈 شراء (ذكاء اصطناعي)";
-        else return "⏳ انتظر، السوق غير واضح";
-      }
-    </script>
   </div>
+
+  <script>
+    const token = "MJPXRBjyjTtzvtZ";
+    const ws = new WebSocket("wss://ws.derivws.com/websockets/v3?app_id=1089");
+
+    let latestPrice = null;
+
+    ws.onopen = function () {
+      ws.send(JSON.stringify({ authorize: token }));
+      ws.send(JSON.stringify({ ticks_subscribe: "frxEURUSD" }));
+    };
+
+    ws.onmessage = function (msg) {
+      const data = JSON.parse(msg.data);
+      if (data.msg_type === "tick") {
+        latestPrice = parseFloat(data.tick.quote);
+        const recommendation = getAIRecommendation(latestPrice);
+        document.getElementById("price").innerText = `السعر اللحظي: ${latestPrice}`;
+        document.getElementById("recommendation").innerText = `التوصية: ${recommendation}`;
+        document.getElementById("time").innerText = `⏰ ${new Date().toLocaleTimeString('ar-EG')}`;
+      }
+    };
+
+    function getAIRecommendation(price) {
+      if (price > 1.0850) return "📉 بيع (ذكاء اصطناعي)";
+      else if (price < 1.0800) return "📈 شراء (ذكاء اصطناعي)";
+      else return "⏳ انتظر، السوق غير واضح";
+    }
+  </script>
 </body>
 </html>
