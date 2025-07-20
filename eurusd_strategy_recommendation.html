@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>توصية EUR/USD - تحليل فني</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: Arial;
+      text-align: center;
+      padding: 50px;
+    }
+    .container {
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+    #output {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🔍 توصية EUR/USD بناءً على RSI + MA</h2>
+    <div id="output">جارٍ تحميل البيانات...</div>
+    <small>يتم التحديث كل 60 ثانية</small>
+  </div>
+
+  <script>
+    const apiKey = "GJSY9KUAILF51AR";
+
+    async function fetchData() {
+      try {
+        const rsiRes = await fetch(`https://www.alphavantage.co/query?function=RSI&symbol=EURUSD&interval=1min&time_period=14&series_type=close&apikey=${apiKey}`);
+        const rsiData = await rsiRes.json();
+        const rsiValues = rsiData["Technical Analysis: RSI"];
+        const latestTime = Object.keys(rsiValues)[0];
+        const rsi = parseFloat(rsiValues[latestTime]["RSI"]);
+
+        const maRes = await fetch(`https://www.alphavantage.co/query?function=SMA&symbol=EURUSD&interval=1min&time_period=10&series_type=close&apikey=${apiKey}`);
+        const maData = await maRes.json();
+        const maValues = maData["Technical Analysis: SMA"];
+        const ma = parseFloat(maValues[latestTime]["SMA"]);
+
+        const priceRes = await fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=EUR&to_currency=USD&apikey=${apiKey}`);
+        const priceData = await priceRes.json();
+        const price = parseFloat(priceData["Realtime Currency Exchange Rate"]["5. Exchange Rate"]);
+
+        let recommendation = "انتظار";
+        if (rsi < 30 && price < ma) {
+          recommendation = "📈 شراء";
+        } else if (rsi > 70 && price > ma) {
+          recommendation = "📉 بيع";
+        }
+
+        document.getElementById("output").innerHTML = `
+          ✅ السعر الحالي: <b>${price.toFixed(5)}</b><br>
+          📊 RSI: <b>${rsi.toFixed(2)}</b><br>
+          📉 MA: <b>${ma.toFixed(5)}</b><br>
+          📌 التوصية: <b>${recommendation}</b><br>
+          🕒 آخر تحديث: ${new Date().toLocaleTimeString('ar-EG')}
+        `;
+      } catch (error) {
+        document.getElementById("output").textContent = "فشل في جلب البيانات.";
+      }
+    }
+
+    fetchData(); // initial
+    setInterval(fetchData, 60000); // update every 60s
+  </script>
+</body>
+</html>
