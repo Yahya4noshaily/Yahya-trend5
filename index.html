@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تسجيل الدخول | Yahya Trend</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background: #111; color: #eee; font-family: Arial; text-align: center; padding: 50px; }
+        input, button { padding: 10px; margin: 10px; width: 80%; max-width: 300px; font-size: 16px; }
+        .container { background: #222; padding: 20px; border-radius: 10px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>تسجيل الدخول</h1>
+        <form onsubmit="event.preventDefault(); login();">
+            <input type="email" id="email" placeholder="البريد الإلكتروني" required><br>
+            <input type="password" id="password" placeholder="كلمة المرور" required><br>
+            <button type="submit">دخول</button>
+        </form>
+        <p id="loginMsg"></p>
+    </div>
+
+    <script>
+        function login() {
+            const email = document.getElementById("email").value;
+            const pass = document.getElementById("password").value;
+            if (email && pass) {
+                window.location.href = "dashboard.html";
+            } else {
+                document.getElementById("loginMsg").textContent = "❌ يرجى تعبئة جميع الحقول";
+            }
+        }
+    </script>
+</body>
+</html>

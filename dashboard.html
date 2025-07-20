@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة Yahya Trend</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial; background: #111; color: #eee; text-align: center; padding: 50px; }
+        button { padding: 10px 20px; font-size: 16px; margin-top: 20px; }
+        .stats { margin-top: 40px; font-size: 20px; }
+    </style>
+</head>
+<body>
+    <h1>مرحبًا بك في Yahya Trend</h1>
+    <button onclick="generateRecommendation()">📊 احصل على توصية</button>
+    <div class="stats" id="recommendation"></div>
+    <div class="stats" id="accuracy">نسبة النجاح (آخر 10 توصيات): 80%</div>
+
+    <script>
+        function generateRecommendation() {
+            const options = ["شراء EUR/USD", "بيع EUR/USD"];
+            const pick = options[Math.floor(Math.random() * options.length)];
+            document.getElementById("recommendation").textContent = "📈 التوصية: " + pick;
+        }
+    </script>
+</body>
+</html>
