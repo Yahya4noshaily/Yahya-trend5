@@ -1,14 +1,13 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>توصية EUR/USD - تحليل فني</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>توصية EUR/USD - Yahya Trend</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       background: #111;
-      color: #fff;
+      color: #eee;
       font-family: Arial;
       text-align: center;
       padding: 50px;
@@ -18,61 +17,48 @@
       padding: 20px;
       border-radius: 10px;
       display: inline-block;
+      max-width: 400px;
+      margin: auto;
     }
-    #output {
+    button {
+      padding: 10px 20px;
       font-size: 18px;
       margin-top: 20px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>🔍 توصية EUR/USD بناءً على RSI + MA</h2>
-    <div id="output">جارٍ تحميل البيانات...</div>
-    <small>يتم التحديث كل 60 ثانية</small>
+    <h1>📊 توصية EUR/USD</h1>
+    <p id="recommendation">جاري تحميل التوصية...</p>
+    <p id="price">السعر الحالي: ...</p>
+    <button onclick="fetchRecommendation()">🔄 تحديث التوصية</button>
   </div>
 
   <script>
-    const apiKey = "GJSY9KUAILF51AR";
-
-    async function fetchData() {
+    async function fetchRecommendation() {
       try {
-        const rsiRes = await fetch(`https://www.alphavantage.co/query?function=RSI&symbol=EURUSD&interval=1min&time_period=14&series_type=close&apikey=${apiKey}`);
-        const rsiData = await rsiRes.json();
-        const rsiValues = rsiData["Technical Analysis: RSI"];
-        const latestTime = Object.keys(rsiValues)[0];
-        const rsi = parseFloat(rsiValues[latestTime]["RSI"]);
+        const res = await fetch(
+          "https://www.alphavantage.co/query?function=FX_INTRADAY&from_symbol=EUR&to_symbol=USD&interval=1min&apikey=GJSY9KUAILF51AR"
+        );
+        const data = await res.json();
+        const latestTime = Object.keys(data["Time Series FX (1min)"])[0];
+        const currentPrice = data["Time Series FX (1min)"][latestTime]["1. open"];
 
-        const maRes = await fetch(`https://www.alphavantage.co/query?function=SMA&symbol=EURUSD&interval=1min&time_period=10&series_type=close&apikey=${apiKey}`);
-        const maData = await maRes.json();
-        const maValues = maData["Technical Analysis: SMA"];
-        const ma = parseFloat(maValues[latestTime]["SMA"]);
+        // توصية بسيطة: إذا السعر فوق 1.08 => شراء، غير ذلك بيع
+        const signal = currentPrice > 1.08 ? "✅ شراء" : "🚫 بيع";
 
-        const priceRes = await fetch(`https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=EUR&to_currency=USD&apikey=${apiKey}`);
-        const priceData = await priceRes.json();
-        const price = parseFloat(priceData["Realtime Currency Exchange Rate"]["5. Exchange Rate"]);
-
-        let recommendation = "انتظار";
-        if (rsi < 30 && price < ma) {
-          recommendation = "📈 شراء";
-        } else if (rsi > 70 && price > ma) {
-          recommendation = "📉 بيع";
-        }
-
-        document.getElementById("output").innerHTML = `
-          ✅ السعر الحالي: <b>${price.toFixed(5)}</b><br>
-          📊 RSI: <b>${rsi.toFixed(2)}</b><br>
-          📉 MA: <b>${ma.toFixed(5)}</b><br>
-          📌 التوصية: <b>${recommendation}</b><br>
-          🕒 آخر تحديث: ${new Date().toLocaleTimeString('ar-EG')}
-        `;
+        document.getElementById("recommendation").textContent = `التوصية: ${signal}`;
+        document.getElementById("price").textContent = `السعر الحالي: ${currentPrice}`;
       } catch (error) {
-        document.getElementById("output").textContent = "فشل في جلب البيانات.";
+        document.getElementById("recommendation").textContent = "❌ فشل في جلب التوصية";
+        console.error("API Error:", error);
       }
     }
 
-    fetchData(); // initial
-    setInterval(fetchData, 60000); // update every 60s
+    // جلب تلقائي عند فتح الصفحة
+    fetchRecommendation();
   </script>
 </body>
 </html>
