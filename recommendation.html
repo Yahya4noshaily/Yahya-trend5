@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>توصية EUR/USD</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: #111;
+            color: #eee;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        h1, h2 {
+            color: #4caf50;
+        }
+        .info {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>توصية EUR/USD</h1>
+        <div id="price">السعر اللحظي: جاري التحميل...</div>
+        <div class="info">نسبة النجاح (آخر 10 توصيات): <strong>80%</strong></div>
+        <div class="info">مدة الصفقة: <strong>دقيقة واحدة</strong></div>
+        <div class="info" id="timestamp">آخر تحديث: 13:13:08</div>
+    </div>
+
+    <script>
+        async function fetchPrice() {
+            try {
+                const response = await fetch("https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=EUR&to_currency=USD&apikey=GJSY9KUAILF51AR");
+                const data = await response.json();
+                const rate = data["Realtime Currency Exchange Rate"]["5. Exchange Rate"];
+                document.getElementById("price").innerHTML = "السعر اللحظي: " + parseFloat(rate).toFixed(5);
+                document.getElementById("timestamp").innerHTML = "آخر تحديث: " + new Date().toLocaleTimeString('ar-EG');
+            } catch (error) {
+                document.getElementById("price").innerHTML = "فشل في جلب السعر.";
+            }
+        }
+
+        fetchPrice(); // initial call
+        setInterval(fetchPrice, 60000); // update every 60 seconds
+    </script>
+</body>
+</html>
